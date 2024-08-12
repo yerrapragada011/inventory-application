@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<head>
+    <title><%= title %></title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <ul>
+        <% games.forEach((game) => { %> <%- include('game', { game: game }) %> <% }); %>
+    </ul>
+    <a href="/newGame">Add new game</a>
+</body>
+</html>

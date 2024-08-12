@@ -32,6 +32,7 @@ VALUES
     ('Sports');
 
 INSERT INTO developers (fullname)
+VALUES
     ('Nintendo'),
     ('Ubisoft'),
     ('Electronic Arts'),
@@ -40,6 +41,7 @@ INSERT INTO developers (fullname)
     ('Sony Interactive Entertainment');
 
 INSERT INTO games (title, genre, developer)
+VALUES
     ('Super Mario Bros', 'Action', 'Nintendo'),
     ('Assassin''s Creed', 'Action-Adventure', 'Ubisoft'),
     ('The Sims', 'Simulation', 'Electronic Arts'),

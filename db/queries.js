@@ -21,7 +21,7 @@ async function addDeveloper(fullname) {
 }
 
 async function getGameDetail(id) {
-  const { rows } = await pool.query('SELEC * FROM games WHERE id = $1', [id])
+  const { rows } = await pool.query('SELECT * FROM games WHERE id = $1', [id])
   return rows[0]
 }
 
