@@ -18,3 +18,21 @@ exports.gameDetailGet = async (req, res) => {
     res.status(404).send('Game not found')
   }
 }
+
+exports.addNewGameGet = async (req, res) => {
+  const genres = await db.getAllGenres()
+  const developers = await db.getAllDevelopers()
+  res.render('gameForm', {
+    title: 'New Game',
+    genres: genres,
+    developers: developers
+  })
+}
+
+exports.addNewGamePost = async (req, res) => {
+  const { gameName, genre, developer } = req.body
+  const selectedGenres = Array.isArray(genre) ? genre : [genre]
+  const selectedDevelopers = Array.isArray(developer) ? developer : [developer]
+  await db.addGame(gameName, selectedGenres, selectedDevelopers)
+  res.redirect('/')
+}

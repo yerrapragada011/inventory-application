@@ -1,5 +1,22 @@
-<h1><%= title %></h1>
-<p>Title: <%= game.title %></p>
-<p>Genres: <%= game.genre %></p>
-<p>Developers: <%= game.developer %></p>
-<a href="/">Back Home</a>
+<li><strong><%= game.title %></strong></li>
+<p><strong>Genres:</strong></p>
+<ul>
+  <% if (game.genres && game.genres.length > 0) { %> <%
+  game.genres.forEach(function(genre) { %>
+  <li><%= genre %></li>
+  <% }); %> <% } else { %>
+  <li>No genres available</li>
+  <% } %>
+</ul>
+
+<p><strong>Developers:</strong></p>
+<ul>
+  <% if (game.developers && game.developers.length > 0) { %> <%
+  game.developers.forEach(function(developer) { %>
+  <li><%= developer %></li>
+  <% }); %> <% } else { %>
+  <li>No developers available</li>
+  <% } %>
+</ul>
+
+<a href="/">Go home</a>

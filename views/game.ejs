@@ -1,4 +1,14 @@
-<li><%= game.title %></li>
-<p><%= game.genre %></p>
-<p><%= game.developer %></p>
+<li><strong><%= game.title %></strong></li>
+<p><strong>Genres:</strong></p>
+<ul>
+  <% game.genres.forEach(genre => { %>
+  <li><%= genre %></li>
+  <% }) %>
+</ul>
+<p><strong>Developers:</strong></p>
+<ul>
+  <% game.developers.forEach(developer => { %>
+  <li><%= developer %></li>
+  <% }) %>
+</ul>
 <a href="/gameDetail/<%= game.id %>">Open</a>

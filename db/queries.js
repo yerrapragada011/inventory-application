@@ -1,41 +1,162 @@
 const pool = require('./pool')
 
+// Retrieve all games with associated genres and developers
 async function getAllGames() {
-  const { rows } = await pool.query('SELECT * FROM games')
+  const { rows } = await pool.query(`
+    SELECT g.id, g.title, array_agg(DISTINCT ge.name) AS genres, array_agg(DISTINCT d.fullname) AS developers
+    FROM games g
+    LEFT JOIN game_genres gg ON g.id = gg.game_id
+    LEFT JOIN genres ge ON gg.genre_id = ge.id
+    LEFT JOIN game_developers gd ON g.id = gd.game_id
+    LEFT JOIN developers d ON gd.developer_id = d.id
+    GROUP BY g.id
+  `)
   return rows
 }
 
-async function addGame(title, genres, developers) {
-  await pool.query(
-    'INSERT INTO games (title, genres, developers) VALUES ($1, $2, $3)',
-    [title, genres, developers]
-  )
+// Retrieve all genres
+async function getAllGenres() {
+  const { rows } = await pool.query('SELECT * FROM genres')
+  return rows
 }
 
+// Retrieve all developers
+async function getAllDevelopers() {
+  const { rows } = await pool.query('SELECT * FROM developers')
+  return rows
+}
+
+// Add a new game
+async function addGame(title, genres = [], developers = []) {
+  // Ensure genres and developers are arrays
+  if (!Array.isArray(genres)) {
+    genres = [genres]
+  }
+  if (!Array.isArray(developers)) {
+    developers = [developers]
+  }
+
+  // Insert the game
+  const { rows } = await pool.query(
+    'INSERT INTO games (title) VALUES ($1) RETURNING id',
+    [title]
+  )
+  const gameId = rows[0].id
+
+  // Add genres
+  for (let genre of genres) {
+    console.log(`Looking up genre: ${genre}`)
+    const { rows: genreRows } = await pool.query(
+      'SELECT id FROM genres WHERE name = $1',
+      [genre]
+    )
+    if (genreRows.length > 0) {
+      const genreId = genreRows[0].id
+      await pool.query(
+        'INSERT INTO game_genres (game_id, genre_id) VALUES ($1, $2)',
+        [gameId, genreId]
+      )
+      console.log(`Inserted genre ID: ${genreId} for game ID: ${gameId}`)
+    } else {
+      console.log(`Genre not found: ${genre}`)
+    }
+  }
+
+  // Add developers
+  for (let developer of developers) {
+    console.log(`Looking up developer: ${developer}`)
+    const { rows: developerRows } = await pool.query(
+      'SELECT id FROM developers WHERE fullname = $1',
+      [developer]
+    )
+    if (developerRows.length > 0) {
+      const developerId = developerRows[0].id
+      await pool.query(
+        'INSERT INTO game_developers (game_id, developer_id) VALUES ($1, $2)',
+        [gameId, developerId]
+      )
+      console.log(
+        `Inserted developer ID: ${developerId} for game ID: ${gameId}`
+      )
+    } else {
+      console.log(`Developer not found: ${developer}`)
+    }
+  }
+}
+
+// Add a new genre
 async function addGenre(name) {
   await pool.query('INSERT INTO genres (name) VALUES ($1)', [name])
 }
 
+// Add a new developer
 async function addDeveloper(fullname) {
-  await pool.query('INSERT INTO developers (fullname) VALUES $(1)', [fullname])
+  await pool.query('INSERT INTO developers (fullname) VALUES ($1)', [fullname])
 }
 
+// Retrieve game details with associated genres and developers
 async function getGameDetail(id) {
-  const { rows } = await pool.query('SELECT * FROM games WHERE id = $1', [id])
+  const { rows } = await pool.query(
+    `
+    SELECT g.id, g.title, array_agg(DISTINCT ge.name) AS genres, array_agg(DISTINCT d.fullname) AS developers
+    FROM games g
+    LEFT JOIN game_genres gg ON g.id = gg.game_id
+    LEFT JOIN genres ge ON gg.genre_id = ge.id
+    LEFT JOIN game_developers gd ON g.id = gd.game_id
+    LEFT JOIN developers d ON gd.developer_id = d.id
+    WHERE g.id = $1
+    GROUP BY g.id
+  `,
+    [id]
+  )
+  console.log(rows[0])
   return rows[0]
 }
 
-async function updateGame(id, title, genre, developer) {
-  await pool.query(
-    'UPDATE games SET title = $1, genre = $2, developer = $3 WHERE id = $4',
-    [title, genre, developer, id]
-  )
+// Update a game
+async function updateGame(id, title, genres, developers) {
+  await pool.query('UPDATE games SET title = $1 WHERE id = $2', [title, id])
+
+  // Remove old associations
+  await pool.query('DELETE FROM game_genres WHERE game_id = $1', [id])
+  await pool.query('DELETE FROM game_developers WHERE game_id = $1', [id])
+
+  // Add new associations
+  for (let genre of genres) {
+    const { rows: genreRows } = await pool.query(
+      'SELECT id FROM genres WHERE name = $1',
+      [genre]
+    )
+    if (genreRows.length > 0) {
+      const genreId = genreRows[0].id
+      await pool.query(
+        'INSERT INTO game_genres (game_id, genre_id) VALUES ($1, $2)',
+        [id, genreId]
+      )
+    }
+  }
+
+  for (let developer of developers) {
+    const { rows: developerRows } = await pool.query(
+      'SELECT id FROM developers WHERE fullname = $1',
+      [developer]
+    )
+    if (developerRows.length > 0) {
+      const developerId = developerRows[0].id
+      await pool.query(
+        'INSERT INTO game_developers (game_id, developer_id) VALUES ($1, $2)',
+        [id, developerId]
+      )
+    }
+  }
 }
 
+// Update a genre
 async function updateGenre(id, name) {
   await pool.query('UPDATE genres SET name = $1 WHERE id = $2', [name, id])
 }
 
+// Update a developer
 async function updateDeveloper(id, fullname) {
   await pool.query('UPDATE developers SET fullname = $1 WHERE id = $2', [
     fullname,
@@ -43,20 +164,29 @@ async function updateDeveloper(id, fullname) {
   ])
 }
 
+// Delete a game
 async function deleteGame(id) {
+  await pool.query('DELETE FROM game_genres WHERE game_id = $1', [id])
+  await pool.query('DELETE FROM game_developers WHERE game_id = $1', [id])
   await pool.query('DELETE FROM games WHERE id = $1', [id])
 }
 
+// Delete a genre
 async function deleteGenre(id) {
+  await pool.query('DELETE FROM game_genres WHERE genre_id = $1', [id])
   await pool.query('DELETE FROM genres WHERE id = $1', [id])
 }
 
+// Delete a developer
 async function deleteDeveloper(id) {
+  await pool.query('DELETE FROM game_developers WHERE developer_id = $1', [id])
   await pool.query('DELETE FROM developers WHERE id = $1', [id])
 }
 
 module.exports = {
   getAllGames,
+  getAllGenres,
+  getAllDevelopers,
   addGame,
   addGenre,
   addDeveloper,
@@ -65,6 +195,5 @@ module.exports = {
   updateGenre,
   updateDeveloper,
   deleteGame,
-  deleteGenre,
-  deleteDeveloper
+  deleteGenre
 }
