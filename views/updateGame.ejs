@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <title><%= title %></title>
+</head>
+<body>
+    <form method="post" action="/updateGame/<%= game.id %>">
+        <p>
+            <label for="gameName">Game's name: </label>
+            <input type="text" id="gameName" name="gameName">
+        </p>
+
+
+        <p>Genres:</p>
+        <% genres.forEach(function(genre) { %>
+            <div>
+                <input type="checkbox" id="genre_<%= genre.id %>" name="genre" value="<%= genre.name %>">
+                <label for="genre_<%= genre.id %>"><%= genre.name %></label>
+            </div>
+        <% }); %>
+
+        <p>Developers:</p>
+        <% developers.forEach(function(developer) { %>
+            <div>
+                <input type="checkbox" id="developer_<%= developer.id %>" name="developer" value="<%= developer.fullname %>">
+                <label for="developer_<%= developer.id %>"><%= developer.fullname %></label>
+            </div>
+        <% }); %>
+
+        <button type="submit">Update Game</button>
+    </form>
+</body>
+</html>

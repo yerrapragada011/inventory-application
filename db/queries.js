@@ -45,7 +45,6 @@ async function addGame(title, genres = [], developers = []) {
 
   // Add genres
   for (let genre of genres) {
-    console.log(`Looking up genre: ${genre}`)
     const { rows: genreRows } = await pool.query(
       'SELECT id FROM genres WHERE name = $1',
       [genre]
@@ -56,7 +55,6 @@ async function addGame(title, genres = [], developers = []) {
         'INSERT INTO game_genres (game_id, genre_id) VALUES ($1, $2)',
         [gameId, genreId]
       )
-      console.log(`Inserted genre ID: ${genreId} for game ID: ${gameId}`)
     } else {
       console.log(`Genre not found: ${genre}`)
     }
@@ -64,7 +62,6 @@ async function addGame(title, genres = [], developers = []) {
 
   // Add developers
   for (let developer of developers) {
-    console.log(`Looking up developer: ${developer}`)
     const { rows: developerRows } = await pool.query(
       'SELECT id FROM developers WHERE fullname = $1',
       [developer]
@@ -74,9 +71,6 @@ async function addGame(title, genres = [], developers = []) {
       await pool.query(
         'INSERT INTO game_developers (game_id, developer_id) VALUES ($1, $2)',
         [gameId, developerId]
-      )
-      console.log(
-        `Inserted developer ID: ${developerId} for game ID: ${gameId}`
       )
     } else {
       console.log(`Developer not found: ${developer}`)
@@ -109,7 +103,6 @@ async function getGameDetail(id) {
   `,
     [id]
   )
-  console.log(rows[0])
   return rows[0]
 }
 
@@ -195,5 +188,6 @@ module.exports = {
   updateGenre,
   updateDeveloper,
   deleteGame,
-  deleteGenre
+  deleteGenre,
+  deleteDeveloper
 }

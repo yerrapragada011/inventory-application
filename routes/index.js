@@ -10,4 +10,8 @@ router.get('/newGame', gamesController.addNewGameGet)
 
 router.post('/newGame', gamesController.addNewGamePost)
 
+router.get('/updateGame/:id', gamesController.updateGameGet)
+
+router.post('/updateGame/:id', gamesController.updateGamePost)
+
 module.exports = router
