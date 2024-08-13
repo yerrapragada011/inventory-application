@@ -16,4 +16,8 @@ router.get('/updateGame/:id', gamesController.updateGameGet)
 
 router.post('/updateGame/:id', gamesController.updateGamePost)
 
+router.get('/newGenre', gamesController.addNewGenreGet)
+
+router.post('/newGenre', gamesController.addNewGenrePost)
+
 module.exports = router

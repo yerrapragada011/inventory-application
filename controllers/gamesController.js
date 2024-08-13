@@ -62,12 +62,6 @@ exports.updateGamePost = async (req, res) => {
   const { gameName, genre, developer } = req.body
   const gameId = parseInt(req.params.id, 10)
 
-  // Validate gameId
-  if (isNaN(gameId)) {
-    return res.status(400).send('Invalid game ID')
-  }
-
-  // Ensure genres and developers are arrays
   const selectedGenres = Array.isArray(genre) ? genre : genre ? [genre] : []
   const selectedDevelopers = Array.isArray(developer)
     ? developer
@@ -82,4 +76,16 @@ exports.updateGamePost = async (req, res) => {
     console.error('Error updating game:', error)
     res.status(500).send('Error updating game')
   }
+}
+
+exports.addNewGenreGet = async (req, res) => {
+  res.render('genreForm', {
+    title: 'Add Genre'
+  })
+}
+
+exports.addNewGenrePost = async (req, res) => {
+  const { genreName } = req.body
+  await db.addGenre(genreName)
+  res.redirect('/genresList')
 }
