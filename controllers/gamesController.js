@@ -86,6 +86,11 @@ exports.updateGamePost = async (req, res) => {
   }
 }
 
+exports.deleteGamePost = async (req, res) => {
+  db.deleteGame(req.params.id)
+  res.redirect('/')
+}
+
 exports.addNewGenreGet = async (req, res) => {
   res.render('genreForm', {
     title: 'Add Genre'

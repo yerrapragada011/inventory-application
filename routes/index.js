@@ -18,6 +18,8 @@ router.get('/updateGame/:id', gamesController.updateGameGet)
 
 router.post('/updateGame/:id', gamesController.updateGamePost)
 
+router.post('/:id/delete', gamesController.deleteGamePost)
+
 router.get('/newGenre', gamesController.addNewGenreGet)
 
 router.post('/newGenre', gamesController.addNewGenrePost)
