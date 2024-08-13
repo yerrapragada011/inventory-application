@@ -4,6 +4,8 @@ const gamesController = require('../controllers/gamesController')
 
 router.get('/', gamesController.gamesList)
 
+router.get('/genresList', gamesController.genresList)
+
 router.get('/gameDetail/:id', gamesController.gameDetailGet)
 
 router.get('/newGame', gamesController.addNewGameGet)

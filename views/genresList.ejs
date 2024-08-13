@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+    <title><%= title %></title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <a href="/">Games List</a>
+    <ul>
+        <% genres.forEach((genre) => { %> <%- include('genre', { genre: genre }) %> <% }); %>
+    </ul>
+    <a href="/newGenre">Add new genre</a>
+</body>
+</html>

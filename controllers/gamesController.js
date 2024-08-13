@@ -8,6 +8,14 @@ exports.gamesList = async (req, res) => {
   })
 }
 
+exports.genresList = async (req, res) => {
+  const genres = await db.getAllGenres()
+  res.render('genresList', {
+    title: 'Genres',
+    genres: genres
+  })
+}
+
 exports.gameDetailGet = async (req, res) => {
   const gameId = parseInt(req.params.id, 10)
   const game = await db.getGameDetail(gameId)
