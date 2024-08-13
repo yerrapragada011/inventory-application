@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
     <title><%= title %></title>
 </head>
@@ -6,14 +7,14 @@
     <form method="post" action="/updateGame/<%= game.id %>">
         <p>
             <label for="gameName">Game's name: </label>
-            <input type="text" id="gameName" name="gameName">
+            <input type="text" id="gameName" name="gameName" value="<%= game.title %>">
         </p>
-
 
         <p>Genres:</p>
         <% genres.forEach(function(genre) { %>
             <div>
-                <input type="checkbox" id="genre_<%= genre.id %>" name="genre" value="<%= genre.name %>">
+                <input type="checkbox" id="genre_<%= genre.id %>" name="genre" value="<%= genre.name %>"
+                    <% if (game.genres && game.genres.includes(genre.name)) { %> checked <% } %> >
                 <label for="genre_<%= genre.id %>"><%= genre.name %></label>
             </div>
         <% }); %>
@@ -21,7 +22,8 @@
         <p>Developers:</p>
         <% developers.forEach(function(developer) { %>
             <div>
-                <input type="checkbox" id="developer_<%= developer.id %>" name="developer" value="<%= developer.fullname %>">
+                <input type="checkbox" id="developer_<%= developer.id %>" name="developer" value="<%= developer.fullname %>"
+                    <% if (game.developers && game.developers.includes(developer.fullname)) { %> checked <% } %> >
                 <label for="developer_<%= developer.id %>"><%= developer.fullname %></label>
             </div>
         <% }); %>
