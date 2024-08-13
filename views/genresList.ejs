@@ -6,9 +6,9 @@
     <h1><%= title %></h1>
     <a href="/">Games List</a>
     <a href="/developersList">Developers List</a>
+    <p><a href="/newGenre">Add new genre</a></p>
     <ul>
         <% genres.forEach((genre) => { %> <%- include('genre', { genre: genre }) %> <% }); %>
     </ul>
-    <a href="/newGenre">Add new genre</a>
 </body>
 </html>
