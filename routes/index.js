@@ -24,8 +24,12 @@ router.get('/newGenre', gamesController.addNewGenreGet)
 
 router.post('/newGenre', gamesController.addNewGenrePost)
 
+router.post('/genresList/:id/delete', gamesController.deleteGenrePost)
+
 router.get('/newDeveloper', gamesController.addNewDeveloperGet)
 
 router.post('/newDeveloper', gamesController.addNewDeveloperPost)
+
+router.post('/developersList/:id/delete', gamesController.deleteDeveloperPost)
 
 module.exports = router

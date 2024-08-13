@@ -144,17 +144,22 @@ async function updateGame(id, title, genres, developers) {
   }
 }
 
-// Update a genre
-async function updateGenre(id, name) {
-  await pool.query('UPDATE genres SET name = $1 WHERE id = $2', [name, id])
+// Check if any games are associated with the genre
+async function checkGenreAssociations(genreId) {
+  const { rows } = await pool.query(
+    'SELECT COUNT(*) FROM game_genres WHERE genre_id = $1',
+    [genreId]
+  )
+  return rows[0].count > 0
 }
 
-// Update a developer
-async function updateDeveloper(id, fullname) {
-  await pool.query('UPDATE developers SET fullname = $1 WHERE id = $2', [
-    fullname,
-    id
-  ])
+// Check if any games are associated with the developer
+async function checkDeveloperAssociations(developerId) {
+  const { rows } = await pool.query(
+    'SELECT COUNT(*) FROM game_developers WHERE developer_id = $1',
+    [developerId]
+  )
+  return rows[0].count > 0
 }
 
 // Delete a game
@@ -166,15 +171,33 @@ async function deleteGame(id) {
 
 // Delete a genre
 async function deleteGenre(id) {
-  await pool.query('DELETE FROM game_genres WHERE genre_id = $1', [id])
+  // Check if there are associated games
+  const { rows } = await pool.query('SELECT COUNT(*) FROM game_genres WHERE genre_id = $1', [id])
+  const count = parseInt(rows[0].count, 10)
+
+  if (count > 0) {
+    throw new Error('There are games associated with this genre')
+  }
+
+  // Proceed with deletion if no associations
   await pool.query('DELETE FROM genres WHERE id = $1', [id])
 }
 
+
 // Delete a developer
 async function deleteDeveloper(id) {
-  await pool.query('DELETE FROM game_developers WHERE developer_id = $1', [id])
+  // Check if there are associated games
+  const { rows } = await pool.query('SELECT COUNT(*) FROM game_developers WHERE developer_id = $1', [id])
+  const count = parseInt(rows[0].count, 10)
+
+  if (count > 0) {
+    throw new Error('There are games associated with this developer')
+  }
+
+  // Proceed with deletion if no associations
   await pool.query('DELETE FROM developers WHERE id = $1', [id])
 }
+
 
 module.exports = {
   getAllGames,
@@ -185,9 +208,9 @@ module.exports = {
   addDeveloper,
   getGameDetail,
   updateGame,
-  updateGenre,
-  updateDeveloper,
   deleteGame,
   deleteGenre,
-  deleteDeveloper
+  deleteDeveloper,
+  checkGenreAssociations,
+  checkDeveloperAssociations
 }

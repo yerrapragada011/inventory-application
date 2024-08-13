@@ -103,6 +103,18 @@ exports.addNewGenrePost = async (req, res) => {
   res.redirect('/genresList')
 }
 
+exports.deleteGenrePost = async (req, res) => {
+  const genreId = parseInt(req.params.id, 10)
+
+  try {
+    await db.deleteGenre(genreId)
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting genre:', error)
+    res.status(400).json({ success: false, message: error.message })
+  }
+}
+
 exports.addNewDeveloperGet = async (req, res) => {
   res.render('developerForm', {
     title: 'Add Developer'
@@ -113,4 +125,16 @@ exports.addNewDeveloperPost = async (req, res) => {
   const { developerName } = req.body
   await db.addDeveloper(developerName)
   res.redirect('/developersList')
+}
+
+exports.deleteDeveloperPost = async (req, res) => {
+  const developerId = parseInt(req.params.id, 10)
+
+  try {
+    await db.deleteDeveloper(developerId)
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting developer:', error)
+    res.status(400).json({ success: false, message: error.message })
+  }
 }
