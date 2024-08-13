@@ -16,6 +16,14 @@ exports.genresList = async (req, res) => {
   })
 }
 
+exports.developersList = async (req, res) => {
+  const developers = await db.getAllDevelopers()
+  res.render('developersList', {
+    title: 'Developers',
+    developers: developers
+  })
+}
+
 exports.gameDetailGet = async (req, res) => {
   const gameId = parseInt(req.params.id, 10)
   const game = await db.getGameDetail(gameId)
@@ -88,4 +96,16 @@ exports.addNewGenrePost = async (req, res) => {
   const { genreName } = req.body
   await db.addGenre(genreName)
   res.redirect('/genresList')
+}
+
+exports.addNewDeveloperGet = async (req, res) => {
+  res.render('developerForm', {
+    title: 'Add Developer'
+  })
+}
+
+exports.addNewDeveloperPost = async (req, res) => {
+  const { developerName } = req.body
+  await db.addDeveloper(developerName)
+  res.redirect('/developersList')
 }

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+    <title><%= title %></title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <a href="/">Games List</a>
+    <a href="/genresList">Genres List</a>
+    <ul>
+        <% developers.forEach((developer) => { %> <%- include('developer', { developer: developer }) %> <% }); %>
+    </ul>
+    <a href="/newDeveloper">Add new developer</a>
+</body>
+</html>

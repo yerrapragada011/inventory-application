@@ -6,6 +6,8 @@ router.get('/', gamesController.gamesList)
 
 router.get('/genresList', gamesController.genresList)
 
+router.get('/developersList', gamesController.developersList)
+
 router.get('/gameDetail/:id', gamesController.gameDetailGet)
 
 router.get('/newGame', gamesController.addNewGameGet)
@@ -19,5 +21,9 @@ router.post('/updateGame/:id', gamesController.updateGamePost)
 router.get('/newGenre', gamesController.addNewGenreGet)
 
 router.post('/newGenre', gamesController.addNewGenrePost)
+
+router.get('/newDeveloper', gamesController.addNewDeveloperGet)
+
+router.post('/newDeveloper', gamesController.addNewDeveloperPost)
 
 module.exports = router
